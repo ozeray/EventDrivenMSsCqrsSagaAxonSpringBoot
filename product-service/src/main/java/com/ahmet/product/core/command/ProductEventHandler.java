@@ -23,12 +23,12 @@ public class ProductEventHandler {
     }
 
     @ExceptionHandler(resultType = Exception.class)
-    public void handle(Exception exception) {
-        // Handles exceptions only in this class.
+    public void handle(Exception exception) throws Exception {
+        throw exception;
     }
 
     @EventHandler
-    public void on(ProductCreatedEvent productCreatedEvent) {
+    public void on(ProductCreatedEvent productCreatedEvent) throws Exception {
         Product product = new Product();
         BeanUtils.copyProperties(productCreatedEvent, product);
         try {
@@ -36,5 +36,9 @@ public class ProductEventHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+//        throw new Exception("Error occurred in ProductEventHandler > ProductCreatedEvent handler");
+        // Thanks to ProductServiceEventsHandler, this exception will bubble up until Rest controller, and any staged
+        // changes will roll back.
     }
 }

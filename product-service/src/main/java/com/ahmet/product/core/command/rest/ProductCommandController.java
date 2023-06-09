@@ -16,12 +16,12 @@ import java.util.UUID;
 @RequestMapping("/products")
 public class ProductCommandController {
 
-    private final Environment env;
+//    private final Environment env;
     private final CommandGateway commandGateway;
 
     @Autowired
     public ProductCommandController(Environment env, CommandGateway commandGateway) {
-        this.env = env;
+//        this.env = env;
         this.commandGateway = commandGateway;
     }
 
