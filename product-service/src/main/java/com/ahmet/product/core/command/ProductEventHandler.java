@@ -1,0 +1,40 @@
+package com.ahmet.product.core.command;
+
+import com.ahmet.product.core.data.Product;
+import com.ahmet.product.core.data.ProductRepository;
+import com.ahmet.product.core.events.ProductCreatedEvent;
+import org.axonframework.config.ProcessingGroup;
+import org.axonframework.eventhandling.EventHandler;
+import org.axonframework.messaging.interceptors.ExceptionHandler;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+@ProcessingGroup("product-group")
+public class ProductEventHandler {
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @ExceptionHandler(resultType = IllegalArgumentException.class)
+    public void handle(IllegalArgumentException exception) {
+        // Handles exceptions only in this class.
+    }
+
+    @ExceptionHandler(resultType = Exception.class)
+    public void handle(Exception exception) {
+        // Handles exceptions only in this class.
+    }
+
+    @EventHandler
+    public void on(ProductCreatedEvent productCreatedEvent) {
+        Product product = new Product();
+        BeanUtils.copyProperties(productCreatedEvent, product);
+        try {
+            productRepository.save(product);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
