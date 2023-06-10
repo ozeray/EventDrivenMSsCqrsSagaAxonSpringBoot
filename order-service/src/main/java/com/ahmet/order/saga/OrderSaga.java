@@ -1,17 +1,13 @@
 package com.ahmet.order.saga;
 
 import com.ahmet.core.command.ReseverProductCommand;
+import com.ahmet.core.events.ProductReservedEvent;
 import com.ahmet.order.events.OrderCreatedEvent;
-import org.axonframework.commandhandling.CommandCallback;
-import org.axonframework.commandhandling.CommandMessage;
-import org.axonframework.commandhandling.CommandResultMessage;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.modelling.saga.SagaEventHandler;
 import org.axonframework.modelling.saga.StartSaga;
 import org.axonframework.spring.stereotype.Saga;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.annotation.Nonnull;
 
 @Saga
 public class OrderSaga {
@@ -33,5 +29,10 @@ public class OrderSaga {
                 // Start a compensating TX
             }
         });
+    }
+
+    @SagaEventHandler(associationProperty = "productId")
+    public void handle(ProductReservedEvent productReservedEvent) {
+        // Process payment
     }
 }
