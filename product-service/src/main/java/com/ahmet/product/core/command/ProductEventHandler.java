@@ -7,6 +7,8 @@ import com.ahmet.product.core.events.ProductCreatedEvent;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.messaging.interceptors.ExceptionHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,8 @@ public class ProductEventHandler {
 
     @Autowired
     private ProductRepository productRepository;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductEventHandler.class);
 
     @ExceptionHandler(resultType = IllegalArgumentException.class)
     public void handle(IllegalArgumentException exception) {
@@ -52,6 +56,8 @@ public class ProductEventHandler {
             Product product = optionalProduct.get();
             product.setQuantity(product.getQuantity() - productReservedEvent.getQuantity());
             productRepository.save(product);
+            LOGGER.info("ProductReservedEvent handled for order id: " + productReservedEvent.getOrderId() +
+                    " and product id: " + productReservedEvent.getProductId());
         } else {
             throw new IllegalStateException("No product record found with id:" + productReservedEvent.getProductId());
         }
